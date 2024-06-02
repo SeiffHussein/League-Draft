@@ -18,7 +18,8 @@ public:
     :m_clubname(clubname),m_stadium(stadium),m_capacity(capacity),m_rating(rating){}
 
     void  display() const {
-        cout << m_clubname << endl;
+        cout << m_clubname << '\n' << m_stadium << " Stadium\n" 
+            << "Capicity: " << m_capacity << endl;
     }
 
 
@@ -57,8 +58,8 @@ int main() {
     Club club1("Manchester United", "Old Trafford", 74000, 84.5);
     Club club2("Liverpool", "Anfield", 54000, 94.7);
     Club club3("Chelsea", "Stamford Bridge", 42000, 88.3);
-    Club club4("Arsenal", "Emirates Stadium", 60260, 90.4);
-    Club club5("Manchester City", "Etihad Stadium", 55000, 95.6);
+    Club club4("Arsenal", "Emirates", 60260, 90.4);
+    Club club5("Manchester City", "Etihad", 55000, 95.6);
     vector<Club> clubs = { club1,club2,club3,club4,club5 };
     for (auto club : clubs) {
         premier_league.addclub(club);
