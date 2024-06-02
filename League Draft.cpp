@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <vector>
 #include <ctime>
+#include <cstdlib>
+#include <random>
 using namespace std;
 
 class Club {
@@ -21,11 +23,36 @@ public:
         cout << m_clubname << '\n' << m_stadium << " Stadium\n" 
             << "Capicity: " << m_capacity << endl;
     }
-
-
+    friend void gamesim(const Club& club1, const Club& club2);
+    
 
 };
 
+
+void gamesim(const Club& club1, const Club& club2) {
+    random_device rd;  // Obtain a random number from hardware
+    mt19937 gen(rd());  // Seed the generator
+    uniform_real_distribution<> distr(0, 100);  // Define the range
+    static int city = 0;
+    float difference = abs(club1.m_rating - club2.m_rating);
+    float winner = distr(gen);
+    cout << endl << "winner : " << winner << "\n difference: " << difference << "\n";
+    if (club1.m_rating > club2.m_rating) {
+        if (winner <= (50 + (difference * 1.5))) {
+           cout << club1.m_clubname << " is the winner ";
+        }
+        else { cout << club2.m_clubname << " is the winner"; }
+    }
+    else {
+        if (winner <= (50 + (difference * 1.5))) {
+            cout << club2.m_clubname << " is the winner!\n";
+        }
+        else {
+            cout << club1.m_clubname << " is the winner!\n";
+        }
+    }
+    cout << endl << "city: "<< city << endl;
+}
 
 class League {
 private:
@@ -54,6 +81,8 @@ public:
 
 
 int main() {
+    int x = time(0);
+    srand(x);
     League premier_league("Premier League");
     Club club1("Manchester United", "Old Trafford", 74000, 84.5);
     Club club2("Liverpool", "Anfield", 54000, 94.7);
@@ -65,4 +94,6 @@ int main() {
         premier_league.addclub(club);
     }
     premier_league.displayLeague();
+    gamesim(club5, club1);
+    gamesim(club1,club5);
 }
