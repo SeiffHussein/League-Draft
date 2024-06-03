@@ -37,7 +37,7 @@ private:
     string League_name;
     int club_no;
     vector<Club> clubs;
-    vector <pair<Club&, Club&>> matchday;
+    vector<vector <pair<Club&, Club&>>> matchday;
 
 public: 
     League(string const name) : League_name(name), club_no(0) {}
@@ -45,18 +45,22 @@ public:
         clubs.push_back(club);
         club_no = clubs.size(); //need something more efficient O(n)
     }
-    void addmatchday() {
-        vector<int> indices(club_no);
-        for (int i = 0; i < club_no; ++i) {
-            indices[i] = i;
-        }
-        random_shuffle(indices.begin(), indices.end());
+    void addmatchday(){
+        vector<int> opponents(club_no);
+        for (int team = 0; team < club_no; team++) {
+            for (int i = 0; i < club_no; ++i) {
+                if (team != i) {
+                    opponents[i] = i;
+                }
+            }
 
-        for (int i = 0; i < club_no; i += 2) {
-            matchday.push_back({ clubs[indices[i]], clubs[indices[i + 1]] });
+            random_shuffle(opponents.begin(), opponents.end());
+            for (int match = 0; match < club_no - 1; match++) {
+                matchday[team][match] = opponents[match];
+            }
         }
-
     }
+    
     int getClubno() { return club_no; }
     void displayLeague()const {
         cout << "League name: " << League_name << endl;
