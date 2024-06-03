@@ -105,9 +105,7 @@ int main() {
     for (auto club : clubs) {
         premier_league.addclub(club);
     }
-    //premier_league.displayLeague();
-    premier_league.addmatchday();
-    premier_league.addmatchday();
+    premier_league.displayLeague();
     premier_league.addmatchday();
     premier_league.displayMatchday();
 }
