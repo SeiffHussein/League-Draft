@@ -15,9 +15,9 @@ private:
     string m_clubname;
     string m_stadium;
     int m_capacity;
-    float m_rating;
+    double m_rating;
 public:
-    Club(const string & clubname, const string stadium, int capacity, float rating)
+    Club(const string & clubname, const string stadium, int capacity, double rating)
     :m_clubname(clubname),m_stadium(stadium),m_capacity(capacity),m_rating(rating){}
 
     void  display() const {
@@ -46,21 +46,21 @@ public:
         club_no = clubs.size(); //need something more efficient O(n)
     }
     void addmatchday(){
-        vector<int> opponents(club_no-1);
         matchday.resize(club_no);
         for (int team = 0; team < club_no; team++) {
+            vector<int> opponents;
             for (int i = 0; i < club_no; ++i) {
                 if (team != i) {
-                    opponents[i] = i;
+                    opponents.push_back(i);
                 }
             }
 
+            
             random_shuffle(opponents.begin(), opponents.end());
 
-         for (int match = 0; match < club_no - 1; match++) {
-         matchday[team].push_back({ clubs[team], clubs[opponents[match]] });
-                }
-            
+            for (int match = 0; match < club_no - 1; match++) {
+                matchday[team].push_back({ clubs[team], clubs[opponents[match]] });
+            }
         }
     }
     
@@ -114,7 +114,7 @@ int main() {
     for (auto club : clubs) {
         premier_league.addclub(club);
     }
-    premier_league.displayLeague();
+    //premier_league.displayLeague();
     premier_league.addmatchday();
     premier_league.displayMatchday();
 }
