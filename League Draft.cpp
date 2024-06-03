@@ -46,7 +46,8 @@ public:
         club_no = clubs.size(); //need something more efficient O(n)
     }
     void addmatchday(){
-        vector<int> opponents(club_no);
+        vector<int> opponents(club_no-1);
+        matchday.resize(club_no);
         for (int team = 0; team < club_no; team++) {
             for (int i = 0; i < club_no; ++i) {
                 if (team != i) {
@@ -55,9 +56,11 @@ public:
             }
 
             random_shuffle(opponents.begin(), opponents.end());
-            for (int match = 0; match < club_no - 1; match++) {
-                matchday[team][match] = opponents[match];
-            }
+
+         for (int match = 0; match < club_no - 1; match++) {
+         matchday[team].push_back({ clubs[team], clubs[opponents[match]] });
+                }
+            
         }
     }
     
@@ -72,8 +75,10 @@ public:
     }
                         }
     void displayMatchday() {
-        for (auto itr = matchday.begin(); itr != matchday.end(); itr++) {
-            cout << itr->first.getclubname() << " vs " << itr->second.getclubname() << endl;
+        for (const auto& team_matches : matchday) {
+            for (const auto& match : team_matches) {
+                cout << match.first.getclubname() << " vs " << match.second.getclubname() << endl;
+            }
         }
     }
 };
