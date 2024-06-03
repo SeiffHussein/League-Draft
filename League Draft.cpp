@@ -75,10 +75,13 @@ public:
     }
                         }
     void displayMatchday() {
-        for (const auto& team_matches : matchday) {
-            for (const auto& match : team_matches) {
-                cout << match.first.getclubname() << " vs " << match.second.getclubname() << endl;
+        // Display matches
+        for (int match = 0; match < club_no - 1; match++) {
+            cout << "\nMatchday: " << match + 1 << endl;
+            for (int team = 0; team < club_no; team++) {
+                cout << "\n" << matchday[team][match].first.getclubname() << " vs " << matchday[team][match].second.getclubname();
             }
+            cout << endl;
         }
     }
 };
