@@ -1,13 +1,11 @@
 
 #include <iostream>
-#include <cmath>
 #include <string>
-#include <algorithm>
 #include <vector>
-#include <ctime>
-#include <cstdlib>
+#include <algorithm>
 #include <random>
 #include <utility>
+
 using namespace std;
 
 class Club {
@@ -37,7 +35,7 @@ private:
     string League_name;
     int club_no;
     vector<Club> clubs;
-    vector<vector <pair<Club&, Club&>>> matchday;
+    vector<vector<pair<int, int>>> matchday;;
 
 public: 
     League(string const name) : League_name(name), club_no(0) {}
@@ -46,20 +44,19 @@ public:
         club_no = clubs.size(); //need something more efficient O(n)
     }
     void addmatchday(){
-        matchday.resize(club_no);
-        for (int team = 0; team < club_no; team++) {
-            vector<int> opponents;
-            for (int i = 0; i < club_no; ++i) {
-                if (team != i) {
-                    opponents.push_back(i);
-                }
-            }
 
-            
-            random_shuffle(opponents.begin(), opponents.end());
-
-            for (int match = 0; match < club_no - 1; match++) {
-                matchday[team].push_back({ clubs[team], clubs[opponents[match]] });
+        matchday.resize(((club_no - 1)*2), vector<pair<int, int>>(club_no / 2));
+        vector<int> team_indices(club_no);
+        for (int i = 0; i < club_no; i++) {
+            team_indices[i] = i;
+        }
+        random_device rd;
+        mt19937 g(rd());
+        for (int i = 0; i < club_no - 1; ++i) {
+            shuffle(team_indices.begin(), team_indices.end(), g);
+            for (int j = 0; j < club_no / 2; ++j) {
+                matchday[i][j] = make_pair(team_indices[2 * j], team_indices[2 * j + 1]);
+                matchday[i+club_no-1][j] = make_pair(team_indices[2 * j + 1], team_indices[2 * j]);
             }
         }
     }
@@ -76,10 +73,10 @@ public:
                         }
     void displayMatchday() {
         // Display matches
-        for (int match = 0; match < club_no - 1; match++) {
+        for (int match = 0; match < ((club_no - 1)*2); ++match) {
             cout << "\nMatchday: " << match + 1 << endl;
-            for (int team = 0; team < club_no; team++) {
-                cout << "\n" << matchday[team][match].first.getclubname() << " vs " << matchday[team][match].second.getclubname();
+            for (const auto& game : matchday[match]) {
+                cout << "\n" << clubs[game.first].getclubname() << " vs " << clubs[game.second].getclubname();
             }
             cout << endl;
         }
