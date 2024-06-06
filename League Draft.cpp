@@ -10,10 +10,52 @@
 
 using namespace std;
 
+class Player {
+private: 
+    string m_name;
+    int m_age;
+    string m_position;
+    double m_rating;
+    double m_salary;
+    int m_goals;
+    int m_assists;
+    int m_cleansheets;
+public:
+    Player(string name, int age, string position, double rating, double salary)
+        : m_name(name),m_age(age),m_position(position),m_rating(rating), m_salary(salary),
+        m_goals(0), m_assists(0), m_cleansheets(0) {}
+
+    // Getter for name
+    string getName() const { return m_name; }
+
+    // Getter for age
+    int getAge() const { return m_age; }
+
+    // Getter for position
+    string getPosition() const { return m_position; }
+
+    // Getter for rating
+    double getRating() const { return m_rating; }
+
+    // Getter for salary
+    double getSalary() const { return m_salary; }
+
+    // Getter for goals
+    int getGoals() const { return m_goals; }
+
+    // Getter for assists
+    int getAssists() const { return m_assists; }
+
+    // Getter for clean sheets
+    int getCleanSheets() const { return m_cleansheets; }
+
+};
+
 class Club {
 private:
     string m_clubname;
     string m_stadium;
+   // string m_manager;
     int m_capacity;
     double m_rating;
     int m_matches;
@@ -22,17 +64,13 @@ private:
     int m_draw;
     int m_lose;
     queue<char> m_form;
+    vector<Player> squad;
     //int m_goals;
 public:
-    Club(const string & clubname, const string stadium, int capacity, double rating)
-    :m_clubname(clubname),m_stadium(stadium),m_capacity(capacity),m_rating(rating)
-    {
-        m_matches = 0;
-        m_points = 0; 
-        m_win = 0;
-        m_draw = 0;
-        m_lose = 0;
-    }
+    Club(const string & clubname, const string &stadium, int capacity, double rating)
+    :m_clubname(clubname),m_stadium(stadium),m_capacity(capacity),m_rating(rating),
+        m_matches(0), m_points(0),m_win(0), m_draw(0),m_lose(0) 
+    {}
 
     void  display() const {
         std::cout << m_clubname << '\n' << m_stadium << " Stadium\n"
@@ -111,6 +149,11 @@ public:
             tempform.pop();
         }
         std::cout << endl;
+    }
+
+    void addPlayer(const Player& player) {
+       squad.push_back(player);
+        
     }
 
     string getclubname() const { return m_clubname; }
