@@ -14,21 +14,105 @@ private:
     string m_stadium;
     int m_capacity;
     double m_rating;
+    int m_matches;
+    int m_points;
+    int m_win;
+    int m_draw;
+    int m_lose;
 public:
     Club(const string & clubname, const string stadium, int capacity, double rating)
-    :m_clubname(clubname),m_stadium(stadium),m_capacity(capacity),m_rating(rating){}
+    :m_clubname(clubname),m_stadium(stadium),m_capacity(capacity),m_rating(rating)
+    {
+        m_matches = 0;
+        m_points = 0; 
+        m_win = 0;
+        m_draw = 0;
+        m_lose = 0;
+    }
 
     void  display() const {
         cout << m_clubname << '\n' << m_stadium << " Stadium\n" 
             << "Capicity: " << m_capacity << endl << "\n\n";
     }
+    void addGame() { m_matches++; }
+    void addWin() { m_win++; }
+    void addDraw() { m_draw++; }
+    void addLoss() { m_lose++; }
+    string getclubname() const { return m_clubname; }
+    string getStadium() const { return m_stadium; }
+    //int getCapacity() const { return m_capacity; }
+    double getRating() const { return m_rating; }
+    //int getMatches() const { return m_matches; }
+    //int getPoints() const { return m_points; }
+    int getWin() const { return m_win; }
+    int getDraw() const { return m_draw; }
+    int getLoss() const { return m_lose; }
 
-    string getclubname() { return m_clubname; }
 
 
+    friend void gamesim(const Club& club1, const Club& club2);
+    
 
 };
 
+
+void gamesim( Club& club1,  Club& club2) {
+    // Assuming the chance of winning is 33.4%, drawing and losing 33.3%
+    // assumed home advantage increase winning chance by 5% with no effect on drawing
+    // assumed squad rating diffrence increase winning chance by the diffrence * 1.5   
+    random_device rd;  // Obtain a random number
+    mt19937 gen(rd());  // Seed the generator
+    uniform_real_distribution<> distr(0, 100);  // Define the range
+    float difference = abs(club1.getRating() - club2.getRating());
+    float score = distr(gen);
+    //cout << endl << "winner : " << score << "\n difference: " << difference << "\n";
+    
+    if (club1.getRating() >= club2.getRating()) {
+       // cout << "\n\nless than " << (38.4 + (difference * 1.5)) << "to win\n";
+        //cout << "draw between " << (38.4 + (difference * 1.5)) << " and " << (38.4 + ((difference * 1.5)) + ((30.8 - ((difference * 1.5) / 2)))) << endl;
+        if (score < (38.4 + (difference * 1.5))) {
+            club1.addWin();
+            club2.addLoss();
+            cout << club1.getclubname() << " won against "
+                << club2.getclubname() << " at " << club1.getStadium() << endl;
+        }
+        else if (score >= (38.4 + (difference * 1.5)) && score <= (38.4 + ((difference * 1.5)) + ((30.8 - ((difference * 1.5) / 2)))))
+        {
+            club1.addDraw();
+            club2.addDraw();
+            cout << club1.getclubname() << " drawed with "
+                << club2.getclubname() << " at " << club1.getStadium() << endl;
+        }
+        else {
+            club2.addWin();
+            club1.addLoss();
+            cout << club2.getclubname() << " won against "
+                << club1.getclubname() << " at " << club1.getStadium() << endl;
+        }
+    }
+        else if(club2.getRating() > club1.getRating()) {
+        //cout << club1.getclubname() << " win less than " << (38.4 - ((difference * 1.5) / 2)) << endl;
+      //  cout << "draw at " << (38.4 - ((difference * 1.5) / 2)) << " and " << ((38.4 - ((difference * 1.5) / 2)) + (30.8 - ((difference * 1.5) / 2))) << endl;
+            if (score < (38.4 - ((difference*1.5)/2))) {
+                club1.addWin();
+                club2.addLoss();
+                cout << club1.getclubname() << " won against "
+                    << club2.getclubname() << " at " << club1.getStadium() << endl;
+            }
+            else if (score >= (38.4 - ((difference * 1.5) / 2)) && score <= ((38.4 - ((difference * 1.5) / 2)) + (30.8 - ((difference * 1.5) / 2)))) {
+                club1.addDraw();
+                club2.addDraw();
+                cout << club1.getclubname() << " drawed with "
+                    << club2.getclubname() << " at " << club1.getStadium() << endl;
+            }
+            else {
+                club2.addWin();
+                club1.addLoss();
+                cout << club2.getclubname() << " won against "
+                    << club1.getclubname() << " at " << club1.getStadium() << endl;
+            }
+            }
+    }
 
 class League {
 private:
@@ -93,7 +177,7 @@ int main() {
     Club club2("Liverpool", "Anfield", 54000, 94.7);
     Club club3("Chelsea", "Stamford Bridge", 42000, 88.3);
     Club club4("Arsenal", "Emirates", 60260, 90.4);
-    Club club5("Manchester City", "Etihad", 55000, 95.6);
+    Club club5("Manchester City", "Etihad", 55000, 94.5);
     Club club6("Tottenham Spurs", "White Heartlane", 30000, 86.1);
     Club club7("Leicester City", "King Power Stadium", 32312, 82.1);
     Club club8("West Ham United", "London Stadium", 60000, 78.9);
@@ -114,7 +198,9 @@ int main() {
     for (auto club : clubs) {
         premier_league.addclub(club);
     }
-    //premier_league.displayLeague();
+    premier_league.displayLeague();
     premier_league.addmatchday();
     premier_league.displayMatchday();
+    premier_league.displayLeague();
+    
 }
