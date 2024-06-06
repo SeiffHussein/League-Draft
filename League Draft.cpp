@@ -6,6 +6,7 @@
 #include <random>
 #include <utility>
 #include <iomanip>
+#include <queue>
 
 using namespace std;
 
@@ -20,7 +21,7 @@ private:
     int m_win;
     int m_draw;
     int m_lose;
-    //vector<char> form;
+    queue<char> m_form;
     //int m_goals;
 public:
     Club(const string & clubname, const string stadium, int capacity, double rating)
@@ -47,9 +48,71 @@ public:
             << setw(5) << m_lose << endl;
     }
     void addGame() { m_matches++; }
-    void addWin() { m_win++; m_points += 3; }
-    void addDraw() { m_draw++; m_points += 1; }
-    void addLoss() { m_lose++; }
+    void addWin() {
+        m_win++;
+        m_points += 3;
+        if (m_form.size() == 5) {
+            m_form.pop();
+            m_form.push('W');
+        }
+        else {
+            m_form.push('W');
+        }
+    }
+    void addDraw() {
+        m_draw++;
+        m_points += 1;
+        if (m_form.size() == 5) {
+            m_form.pop();
+            m_form.push('D');
+        }
+        else {
+            m_form.push('D');
+        }
+    }
+    void addLoss() {
+        m_lose++;
+        if (m_form.size() == 5) {
+            m_form.pop();
+            m_form.push('L');
+        }
+        else {
+                m_form.push('L');
+        }
+    }
+    int calculateForm() const {
+        int form{0};
+        queue<char> tempform = m_form;
+        while (!tempform.empty()) {
+            switch (tempform.front()) {
+            case 'W':
+                form++;
+                tempform.pop();
+                break;
+            case 'D':
+                tempform.pop();
+                break;
+            case 'L':
+                form--;
+                tempform.pop();
+                break;
+            default:
+                cout << "Invalid variable is present" << endl;
+                break;
+            }
+        }
+        return form;
+    }
+    void displayForm() const {
+        cout << "Form: ";
+        queue<char> tempform = m_form;
+        while (!tempform.empty()) {
+            cout << tempform.front();
+            tempform.pop();
+        }
+        cout << endl;
+    }
+
     string getclubname() const { return m_clubname; }
     string getStadium() const { return m_stadium; }
     int getCapacity() const { return m_capacity; }
@@ -71,15 +134,24 @@ public:
 void gamesim( Club& club1,  Club& club2) {
     // Assuming the chance of winning is 33.4%, drawing and losing 33.3%
     // assumed home advantage increase winning chance by 5% with no effect on drawing
-    // assumed squad rating diffrence increase winning chance by the diffrence * 1.5   
+    // assumed squad rating diffrence increase winning chance by the diffrence * 1.5  
+    // Last 5 matches a team play give them dis/advantage in the range of -+5 
+
+
+
     random_device rd;  // Obtain a random number
     mt19937 gen(rd());  // Seed the generator
     uniform_real_distribution<> distr(0, 100);  // Define the range
     float difference = abs(club1.getRating() - club2.getRating());
     float score = distr(gen);
+
+    // *form difference code here*
+     
+     
+    
     //cout << endl << "winner : " << score << "\n difference: " << difference << "\n";
     
-    cout << club1.getclubname() << " vs " << club2.getclubname() << endl;
+    //cout << club1.getclubname() << " vs " << club2.getclubname() << endl;
     club1.addGame();
     club2.addGame();
 
@@ -128,6 +200,10 @@ void gamesim( Club& club1,  Club& club2) {
                     << club1.getclubname() << " at " << club1.getStadium() << endl;
             }
             }
+    club1.displayForm();
+    cout << club1.calculateForm() << endl;
+    club2.displayForm();
+    cout << club2.calculateForm() << endl;
     }
 
 class League {
@@ -233,7 +309,7 @@ int main() {
     Club club13("Crystal Palace", "Selhurst Park", 25486, 72.9);
     Club club14("Southampton", "St Mary's Stadium", 32389, 74.3);
     Club club15("Brighton & Hove Albion", "Amex Stadium", 30750, 71.5);
-    Club club16("Newcastle United", "St James' Park", 52389, 73.8);
+    Club club16("Newcastle United", "St James' Park", 52389, 73.8); 
     Club club17("Burnley", "Turf Moor", 21401, 69.2);
     Club club18("Fulham", "Craven Cottage", 19359, 67.4);
     Club club19("Sheffield United", "Bramall Lane", 32702, 68.7);
@@ -243,11 +319,14 @@ int main() {
     for (auto club : clubs) {
         premier_league.addclub(club);
     }
-    premier_league.displayLeague();
-    premier_league.addmatchday();
-    premier_league.displayMatchday();
-    premier_league.simulateMatchdays();
-    premier_league.displayLeagueTable();
+    //premier_league.displayLeague();
+    //premier_league.addmatchday();
+    //premier_league.displayMatchday();
+   // premier_league.simulateMatchdays();
+    //premier_league.displayLeagueTable();
+    for (int i = 0; i < 10; i++) {
+        gamesim(club5, club20);
+  }
   
     
 }
