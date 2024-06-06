@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <random>
 #include <utility>
+#include <iomanip>
 
 using namespace std;
 
@@ -19,6 +20,8 @@ private:
     int m_win;
     int m_draw;
     int m_lose;
+    //vector<char> form;
+    //int m_goals;
 public:
     Club(const string & clubname, const string stadium, int capacity, double rating)
     :m_clubname(clubname),m_stadium(stadium),m_capacity(capacity),m_rating(rating)
@@ -34,16 +37,25 @@ public:
         cout << m_clubname << '\n' << m_stadium << " Stadium\n" 
             << "Capicity: " << m_capacity << endl << "\n\n";
     }
+
+    void displayStats() const {
+        cout << left << setw(25) << m_clubname
+            << setw(5) << m_matches
+            << setw(5) << m_points
+            << setw(5) << m_win
+            << setw(5) << m_draw
+            << setw(5) << m_lose << endl;
+    }
     void addGame() { m_matches++; }
-    void addWin() { m_win++; }
-    void addDraw() { m_draw++; }
+    void addWin() { m_win++; m_points += 3; }
+    void addDraw() { m_draw++; m_points += 1; }
     void addLoss() { m_lose++; }
     string getclubname() const { return m_clubname; }
     string getStadium() const { return m_stadium; }
-    //int getCapacity() const { return m_capacity; }
+    int getCapacity() const { return m_capacity; }
     double getRating() const { return m_rating; }
-    //int getMatches() const { return m_matches; }
-    //int getPoints() const { return m_points; }
+    int getMatches() const { return m_matches; }
+    int getPoints() const { return m_points; }
     int getWin() const { return m_win; }
     int getDraw() const { return m_draw; }
     int getLoss() const { return m_lose; }
@@ -67,6 +79,10 @@ void gamesim( Club& club1,  Club& club2) {
     float score = distr(gen);
     //cout << endl << "winner : " << score << "\n difference: " << difference << "\n";
     
+    cout << club1.getclubname() << " vs " << club2.getclubname() << endl;
+    club1.addGame();
+    club2.addGame();
+
     if (club1.getRating() >= club2.getRating()) {
        // cout << "\n\nless than " << (38.4 + (difference * 1.5)) << "to win\n";
         //cout << "draw between " << (38.4 + (difference * 1.5)) << " and " << (38.4 + ((difference * 1.5)) + ((30.8 - ((difference * 1.5) / 2)))) << endl;
@@ -155,12 +171,41 @@ public:
 
     }
                         }
+    void displayLeagueTable()const {
+        vector<Club> sorted_clubs = clubs;
+        
+        sort(sorted_clubs.begin(), sorted_clubs.end(), [](const Club& a, const Club& b) {
+            return a.getPoints() > b.getPoints();
+            });
+
+        cout << left << setw(25) << "Club"
+            << setw(5) << "MP"
+            << setw(5) << "Pts"
+            << setw(5) << "W"
+            << setw(5) << "D"
+            << setw(5) << "L" << endl;
+        for (const auto& Club : sorted_clubs) {
+            Club.displayStats();
+        }
+    }
     void displayMatchday() {
         // Display matches
         for (int match = 0; match < ((club_no - 1)*2); ++match) {
             cout << "\nMatchday: " << match + 1 << endl;
             for (const auto& game : matchday[match]) {
                 cout << "\n" << clubs[game.first].getclubname() << " vs " << clubs[game.second].getclubname();
+               
+            }
+            cout << endl;
+        }
+    }
+    friend void gamesim(const Club& club1, const Club& club2);
+
+    void simulateMatchdays() {
+        for (int match = 0; match < ((club_no - 1) * 2); ++match) {
+            cout << "\nMatchday: " << match + 1 << endl;
+            for (const auto& game : matchday[match]) {
+                gamesim(clubs[game.first], clubs[game.second]);
             }
             cout << endl;
         }
@@ -176,8 +221,8 @@ int main() {
     Club club1("Manchester United", "Old Trafford", 74000, 84.5);
     Club club2("Liverpool", "Anfield", 54000, 94.7);
     Club club3("Chelsea", "Stamford Bridge", 42000, 88.3);
-    Club club4("Arsenal", "Emirates", 60260, 90.4);
-    Club club5("Manchester City", "Etihad", 55000, 94.5);
+    Club club4("Arsenal", "Emirates", 60260, 88.4);
+    Club club5("Manchester City", "Etihad", 55000, 97.5);
     Club club6("Tottenham Spurs", "White Heartlane", 30000, 86.1);
     Club club7("Leicester City", "King Power Stadium", 32312, 82.1);
     Club club8("West Ham United", "London Stadium", 60000, 78.9);
@@ -201,6 +246,8 @@ int main() {
     premier_league.displayLeague();
     premier_league.addmatchday();
     premier_league.displayMatchday();
-    premier_league.displayLeague();
+    premier_league.simulateMatchdays();
+    premier_league.displayLeagueTable();
+  
     
 }
