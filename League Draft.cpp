@@ -35,12 +35,12 @@ public:
     }
 
     void  display() const {
-        cout << m_clubname << '\n' << m_stadium << " Stadium\n" 
+        std::cout << m_clubname << '\n' << m_stadium << " Stadium\n"
             << "Capicity: " << m_capacity << endl << "\n\n";
     }
 
     void displayStats() const {
-        cout << left << setw(25) << m_clubname
+        std::cout << left << setw(25) << m_clubname
             << setw(5) << m_matches
             << setw(5) << m_points
             << setw(5) << m_win
@@ -97,20 +97,20 @@ public:
                 tempform.pop();
                 break;
             default:
-                cout << "Invalid variable is present" << endl;
+                std::cout << "Invalid variable is present" << endl;
                 break;
             }
         }
         return form;
     }
     void displayForm() const {
-        cout << "Form: ";
+        std::cout << "Form: ";
         queue<char> tempform = m_form;
         while (!tempform.empty()) {
-            cout << tempform.front();
+            std::cout << tempform.front();
             tempform.pop();
         }
-        cout << endl;
+        std::cout << endl;
     }
 
     string getclubname() const { return m_clubname; }
@@ -138,7 +138,7 @@ void gamesim( Club& club1,  Club& club2) {
     // Last 5 matches a team play give them dis/advantage in the range of -+5 
 
 
-
+ 
     random_device rd;  // Obtain a random number
     mt19937 gen(rd());  // Seed the generator
     uniform_real_distribution<> distr(0, 100);  // Define the range
@@ -146,64 +146,65 @@ void gamesim( Club& club1,  Club& club2) {
     float score = distr(gen);
 
     // *form difference code here*
+    int formdiff = club1.calculateForm() - club2.calculateForm(); 
      
      
     
-    //cout << endl << "winner : " << score << "\n difference: " << difference << "\n";
+    std::cout << endl << "winner : " << score << "\n difference: " << difference << "\n";
     
     //cout << club1.getclubname() << " vs " << club2.getclubname() << endl;
     club1.addGame();
     club2.addGame();
 
     if (club1.getRating() >= club2.getRating()) {
-       // cout << "\n\nless than " << (38.4 + (difference * 1.5)) << "to win\n";
-        //cout << "draw between " << (38.4 + (difference * 1.5)) << " and " << (38.4 + ((difference * 1.5)) + ((30.8 - ((difference * 1.5) / 2)))) << endl;
-        if (score < (38.4 + (difference * 1.5))) {
+        std::cout << "\n\nless than " << (38.4 + formdiff + (difference * 1.5)) << "to win\n";
+        std::cout << "draw between " << (38.4 + formdiff + (difference * 1.5)) << " and " << (38.4 + formdiff + ((difference * 1.5)) + ((30.8 - (formdiff/2) - ((difference * 1.5) / 2)))) << endl;
+        if (score < (38.4 + formdiff + (difference * 1.5))) {
             club1.addWin();
             club2.addLoss();
-            cout << club1.getclubname() << " won against "
+           std:: cout << club1.getclubname() << " won against "
                 << club2.getclubname() << " at " << club1.getStadium() << endl;
         }
-        else if (score >= (38.4 + (difference * 1.5)) && score <= (38.4 + ((difference * 1.5)) + ((30.8 - ((difference * 1.5) / 2)))))
+        else if (score >= (38.4 + formdiff + (difference * 1.5)) && score <= (38.4 + formdiff+ ((difference * 1.5)) + ((30.8 - ((difference * 1.5) / 2)))))
         {
             club1.addDraw();
             club2.addDraw();
-            cout << club1.getclubname() << " drawed with "
+            std::cout << club1.getclubname() << " drawed with "
                 << club2.getclubname() << " at " << club1.getStadium() << endl;
         }
         else {
             club2.addWin();
             club1.addLoss();
-            cout << club2.getclubname() << " won against "
+            std::cout << club2.getclubname() << " won against "
                 << club1.getclubname() << " at " << club1.getStadium() << endl;
         }
     }
         else if(club2.getRating() > club1.getRating()) {
-        //cout << club1.getclubname() << " win less than " << (38.4 - ((difference * 1.5) / 2)) << endl;
-      //  cout << "draw at " << (38.4 - ((difference * 1.5) / 2)) << " and " << ((38.4 - ((difference * 1.5) / 2)) + (30.8 - ((difference * 1.5) / 2))) << endl;
-            if (score < (38.4 - ((difference*1.5)/2))) {
+        std::cout << club1.getclubname() << " win less than " << (38.4+ (formdiff/2) - ((difference * 1.5) / 2)) << endl;
+      std::cout << "draw at " << (38.4+ (formdiff/2) - ((difference * 1.5) / 2)) << " and " << ((38.4+ (formdiff/2) - ((difference * 1.5) / 2)) + (30.8+ (formdiff/2) - ((difference * 1.5) / 2))) << endl;
+            if (score < (38.4 + (formdiff/2) - ((difference*1.5)/2))) {
                 club1.addWin();
                 club2.addLoss();
-                cout << club1.getclubname() << " won against "
+                std::cout << club1.getclubname() << " won against "
                     << club2.getclubname() << " at " << club1.getStadium() << endl;
             }
-            else if (score >= (38.4 - ((difference * 1.5) / 2)) && score <= ((38.4 - ((difference * 1.5) / 2)) + (30.8 - ((difference * 1.5) / 2)))) {
+            else if (score >= (38.4 + (formdiff/2) - ((difference * 1.5) / 2)) && score <= ((38.4+ (formdiff/2) - ((difference * 1.5) / 2)) + (30.8 +(formdiff/2) - ((difference * 1.5) / 2)))) {
                 club1.addDraw();
                 club2.addDraw();
-                cout << club1.getclubname() << " drawed with "
+                std::cout << club1.getclubname() << " drawed with "
                     << club2.getclubname() << " at " << club1.getStadium() << endl;
             }
             else {
                 club2.addWin();
                 club1.addLoss();
-                cout << club2.getclubname() << " won against "
+                std::cout << club2.getclubname() << " won against "
                     << club1.getclubname() << " at " << club1.getStadium() << endl;
             }
             }
     club1.displayForm();
-    cout << club1.calculateForm() << endl;
+    std::cout << club1.calculateForm() << endl;
     club2.displayForm();
-    cout << club2.calculateForm() << endl;
+    std::cout << club2.calculateForm() << endl;
     }
 
 class League {
@@ -239,9 +240,9 @@ public:
     
     int getClubno() { return club_no; }
     void displayLeague()const {
-        cout << "League name: " << League_name << endl;
-        cout << "Number of clubs: " << club_no << endl; 
-        cout << "clubs:\n";
+        std::cout << "League name: " << League_name << endl;
+        std::cout << "Number of clubs: " << club_no << endl;
+        std::cout << "clubs:\n";
         for (const auto & Club : clubs) {
             Club.display();
 
@@ -254,7 +255,7 @@ public:
             return a.getPoints() > b.getPoints();
             });
 
-        cout << left << setw(25) << "Club"
+        std::cout << left << setw(25) << "Club"
             << setw(5) << "MP"
             << setw(5) << "Pts"
             << setw(5) << "W"
@@ -267,23 +268,23 @@ public:
     void displayMatchday() {
         // Display matches
         for (int match = 0; match < ((club_no - 1)*2); ++match) {
-            cout << "\nMatchday: " << match + 1 << endl;
+            std::cout << "\nMatchday: " << match + 1 << endl;
             for (const auto& game : matchday[match]) {
-                cout << "\n" << clubs[game.first].getclubname() << " vs " << clubs[game.second].getclubname();
+                std::cout << "\n" << clubs[game.first].getclubname() << " vs " << clubs[game.second].getclubname();
                
             }
-            cout << endl;
+            std::cout << endl;
         }
     }
     friend void gamesim(const Club& club1, const Club& club2);
 
     void simulateMatchdays() {
         for (int match = 0; match < ((club_no - 1) * 2); ++match) {
-            cout << "\nMatchday: " << match + 1 << endl;
+            std::cout << "\nMatchday: " << match + 1 << endl;
             for (const auto& game : matchday[match]) {
                 gamesim(clubs[game.first], clubs[game.second]);
             }
-            cout << endl;
+            std::cout << endl;
         }
     }
 };
@@ -325,7 +326,7 @@ int main() {
    // premier_league.simulateMatchdays();
     //premier_league.displayLeagueTable();
     for (int i = 0; i < 10; i++) {
-        gamesim(club5, club20);
+        gamesim(club20, club5);
   }
   
     
