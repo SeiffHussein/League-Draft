@@ -173,6 +173,35 @@ public:
 
 };
 
+int WeightedGoals(double score){
+    if (score <= 40) {
+        return rand() % 1;
+    }
+    if (score > 40 and score <= 58) {
+        return 2;
+    }
+    if (score > 58 and score <= 73) {
+        return 3;
+    }
+    if (score > 73 and score <= 83) {
+        return 4;
+    }
+    if (score > 83 and score <= 91) {
+        return 5;
+    }
+    if (score > 91 and score <= 96) {
+        return 6;
+    }
+    if (score > 96 and score <= 98.5) {
+        return 7;
+    }
+    if (score > 98.5 and score <= 99.5) {
+        return 8;
+    }
+    if (score > 99.5 and score <= 100) {
+        return 9;
+    }
+}
 
 void gamesim( Club& club1,  Club& club2) {
     // Assuming the chance of winning is 33.4%, drawing and losing 33.3%
@@ -185,11 +214,12 @@ void gamesim( Club& club1,  Club& club2) {
     random_device rd;  // Obtain a random number
     mt19937 gen(rd());  // Seed the generator
     uniform_real_distribution<> distr(0, 100);  // Define the range
-    float difference = abs(club1.getRating() - club2.getRating());
-    float score = distr(gen);
+    float difference = abs(club1.getRating() - club2.getRating()); //difference in team rating
+    float score = distr(gen); // random score to calculate the winner
+    int formdiff = club1.calculateForm() - club2.calculateForm(); // difference between the two teams form 
 
-    // *form difference code here*
-    int formdiff = club1.calculateForm() - club2.calculateForm(); 
+    HomeAdvantage = 5 + formdiff + difference; 
+    
      
      
     
@@ -199,6 +229,7 @@ void gamesim( Club& club1,  Club& club2) {
     club1.addGame();
     club2.addGame();
 
+    // calculating chances of winning if club1 (home) rating > club2 (away) rating
     if (club1.getRating() >= club2.getRating()) {
         std::cout << "\n\nless than " << (38.4 + formdiff + (difference * 1.5)) << "to win\n";
         std::cout << "draw between " << (38.4 + formdiff + (difference * 1.5)) << " and " << (38.4 + formdiff + ((difference * 1.5)) + ((30.8 - (formdiff/2) - ((difference * 1.5) / 2)))) << endl;
@@ -222,6 +253,8 @@ void gamesim( Club& club1,  Club& club2) {
                 << club1.getclubname() << " at " << club1.getStadium() << endl;
         }
     }
+
+    //// calculating chances of winning if club2 (away) rating > club1 (home) rating
         else if(club2.getRating() > club1.getRating()) {
         std::cout << club1.getclubname() << " win less than " << (38.4+ (formdiff/2) - ((difference * 1.5) / 2)) << endl;
       std::cout << "draw at " << (38.4+ (formdiff/2) - ((difference * 1.5) / 2)) << " and " << ((38.4+ (formdiff/2) - ((difference * 1.5) / 2)) + (30.8+ (formdiff/2) - ((difference * 1.5) / 2))) << endl;
@@ -244,6 +277,7 @@ void gamesim( Club& club1,  Club& club2) {
                     << club1.getclubname() << " at " << club1.getStadium() << endl;
             }
             }
+    // displaying the last 5 matches results for each team
     club1.displayForm();
     std::cout << club1.calculateForm() << endl;
     club2.displayForm();
