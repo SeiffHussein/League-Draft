@@ -84,7 +84,9 @@ public:
             << setw(5) << m_points
             << setw(5) << m_win
             << setw(5) << m_draw
-            << setw(5) << m_lose << endl;
+            << setw(5) << m_lose
+            << setw(5) << m_goals
+            << setw(5) << m_goalsConceded << endl;
     }
     void addGame() { m_matches++; }
     void addWin() {
@@ -418,7 +420,9 @@ public:
             << setw(5) << "Pts"
             << setw(5) << "W"
             << setw(5) << "D"
-            << setw(5) << "L" << endl;
+            << setw(5) << "L" 
+            << setw(5) << "G"
+            << setw(5) << "GA" << endl;
         for (const auto& Club : sorted_clubs) {
             Club.displayStats();
         }
@@ -479,14 +483,11 @@ int main() {
         premier_league.addclub(club);
     }
     //premier_league.displayLeague();
-    //premier_league.addmatchday();
-    //premier_league.displayMatchday();
-   // premier_league.simulateMatchdays();
-    //premier_league.displayLeagueTable();
-    for (int i = 0; i < 5;  i++) {
-        gamesim(club2, club5);
-    }
-    //gamesim(club20, club5);
+    premier_league.addmatchday();
+   // premier_league.displayMatchday();
+    premier_league.simulateMatchdays();
+    premier_league.displayLeagueTable();
+    
   
     
 }
