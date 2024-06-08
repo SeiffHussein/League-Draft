@@ -173,32 +173,36 @@ public:
 
 };
 
-int WeightedGoals(double score){
-    if (score <= 40) {
-        return rand() % 1;
+int WeightedGoals(double score, double advantage){
+    double advantagecoefficient = advantage / 18;
+    if (score <= (20 - advantagecoefficient)) {
+        return 0;
     }
-    if (score > 40 and score <= 58) {
+    if (score > (20 - advantagecoefficient) and score <= (40 - (2*advantagecoefficient))) {
+        return 1;
+    }
+    if (score > (40 - (2 * advantagecoefficient)) and score <= (58- (3*advantagecoefficient))) {
         return 2;
     }
-    if (score > 58 and score <= 73) {
+    if (score > (58 - (3 * advantagecoefficient)) and score <= (73- (4*advantagecoefficient))) {
         return 3;
     }
-    if (score > 73 and score <= 83) {
+    if (score > (73 - (4 * advantagecoefficient)) and score <= (83 - (5 * advantagecoefficient))) {
         return 4;
     }
-    if (score > 83 and score <= 91) {
+    if (score > (83-(5*advantagecoefficient)) and score <= (91 - (4 * advantagecoefficient))) {
         return 5;
     }
-    if (score > 91 and score <= 96) {
+    if (score > (91 - (4*advantagecoefficient))  and score <= (96 - (3 * advantagecoefficient))) {
         return 6;
     }
-    if (score > 96 and score <= 98.5) {
+    if (score > (96 - (3*advantagecoefficient)) and score <= (98.5 - (2 * advantagecoefficient))) {
         return 7;
     }
-    if (score > 98.5 and score <= 99.5) {
+    if (score > (98.5-(2*advantagecoefficient)) and score <= (99.5-advantagecoefficient)) {
         return 8;
     }
-    if (score > 99.5 and score <= 100) {
+    if (score > (99.5 -advantagecoefficient) and score <= 100) {
         return 9;
     }
 }
@@ -215,12 +219,14 @@ void gamesim( Club& club1,  Club& club2) {
     mt19937 gen(rd());  // Seed the generator
     uniform_real_distribution<> distr(0, 100);  // Define the range
     float difference = abs(club1.getRating() - club2.getRating());
+    double signedDifference = club1.getRating() - club2.getRating();
     //if (difference > 41){}
     float score = distr(gen);
+ 
 
     // *form difference code here*
     int formdiff = club1.calculateForm() - club2.calculateForm(); 
-     
+    double Homeadvantage = formdiff + signedDifference + 5;
     
     
     std::cout << endl << "winner : " << score << "\n difference: " << difference << "\n";
