@@ -7,12 +7,14 @@
 #include <utility>
 #include <iomanip>
 #include <queue>
+#include <fstream>
 
 using namespace std;
 
 class Player {
 private: 
     string m_name;
+    int m_kit;
     int m_age;
     string m_position;
     double m_rating;
@@ -20,9 +22,10 @@ private:
     int m_goals;
     int m_assists;
     int m_cleansheets;
+    
 public:
-    Player(string name, int age, string position, double rating, double salary)
-        : m_name(name),m_age(age),m_position(position),m_rating(rating), m_salary(salary),
+    Player(string name,int kit, int age, string position, double rating, double salary)
+        : m_name(name),m_kit(kit),m_age(age),m_position(position),m_rating(rating), m_salary(salary),
         m_goals(0), m_assists(0), m_cleansheets(0) {}
 
     // Getter for name
@@ -147,7 +150,7 @@ public:
         return form;
     }
     void displayForm() const {
-        std::cout << "Form: ";
+        std::cout << m_clubname <<  " Form: ";
         queue<char> tempform = m_form;
         while (!tempform.empty()) {
             std::cout << tempform.front();
@@ -170,6 +173,7 @@ public:
     int getWin() const { return m_win; }
     int getDraw() const { return m_draw; }
     int getLoss() const { return m_lose; }
+    int getGoals() const { return m_goals;}
 
 
 
@@ -179,35 +183,35 @@ public:
 };
 
 int WeightedGoals(double score, double advantage){
-    double advantagecoefficient = advantage / 18;
+    double advantagecoefficient = advantage / 10;
     if (score <= (20 - advantagecoefficient)) {
         return 0;
     }
     if (score > (20 - advantagecoefficient) and score <= (40 - (2*advantagecoefficient))) {
         return 1;
     }
-    if (score > (40 - (2 * advantagecoefficient)) and score <= (58- (3*advantagecoefficient))) {
+    if (score > (40 - (2 * advantagecoefficient)) and score <= (60- (3*advantagecoefficient))) {
         return 2;
     }
-    if (score > (58 - (3 * advantagecoefficient)) and score <= (73- (4*advantagecoefficient))) {
+    if (score > (60 - (3 * advantagecoefficient)) and score <= (77- (4*advantagecoefficient))) {
         return 3;
     }
-    if (score > (73 - (4 * advantagecoefficient)) and score <= (83 - (5 * advantagecoefficient))) {
+    if (score > (77 - (4 * advantagecoefficient)) and score <= (85 - (5 * advantagecoefficient))) {
         return 4;
     }
-    if (score > (83-(5*advantagecoefficient)) and score <= (91 - (4 * advantagecoefficient))) {
+    if (score > (85-(5*advantagecoefficient)) and score <= (92 - (4 * advantagecoefficient))) {
         return 5;
     }
-    if (score > (91 - (4*advantagecoefficient))  and score <= (96 - (3 * advantagecoefficient))) {
+    if (score > (92 - (4*advantagecoefficient))  and score <= (97 - (3 * advantagecoefficient))) {
         return 6;
     }
-    if (score > (96 - (3*advantagecoefficient)) and score <= (98.5 - (2 * advantagecoefficient))) {
+    if (score > (96.5 - (3*advantagecoefficient)) and score <= (99 - (2 * advantagecoefficient))) {
         return 7;
     }
-    if (score > (98.5-(2*advantagecoefficient)) and score <= (99.5-advantagecoefficient)) {
+    if (score > (99-(2*advantagecoefficient)) and score <= (99.75-advantagecoefficient)) {
         return 8;
     }
-    if (score > (99.5 -advantagecoefficient) and score <= 100) {
+    if (score > (99.75 -advantagecoefficient) and score <= 100) {
         return 9;
     }
 }
@@ -220,15 +224,15 @@ void gamesim( Club& club1,  Club& club2) {
 
 
  
-    random_device rd;  // Obtain a random number
-    mt19937 gen(rd());  // Seed the generator
+     random_device rd;  // Obtain a random number
+     mt19937 gen(rd());  // Seed the generator
     uniform_real_distribution<> distr(0, 100);  // Define the range
     float difference = abs(club1.getRating() - club2.getRating());
     double signedDifference = club1.getRating() - club2.getRating();
     //if (difference > 41){}
     float score = distr(gen); // random number to determine the winner
     float goal_score = distr(gen); // random number to determine number of goals
-    cout << "goal: " << goal_score<< endl;
+   // cout << "goal: " << goal_score<< endl;
  
 
     // *form difference code here*
@@ -236,7 +240,7 @@ void gamesim( Club& club1,  Club& club2) {
     double advantage = formdiff + signedDifference;
     
     
-    std::cout << endl << "winner : " << score << "\n difference: " << difference << "\n";
+   // std::cout << endl << "winner : " << score << "\n difference: " << difference << "\n";
     
     //cout << club1.getclubname() << " vs " << club2.getclubname() << endl;
     club1.addGame();
@@ -249,14 +253,14 @@ void gamesim( Club& club1,  Club& club2) {
     int goals;
 
     if (club1.getRating() >= club2.getRating()) {
-        std::cout << "\n\nless than " << winThreshold << "to win\n";
-        std::cout << "draw between " << winThreshold << " and " << drawThreshold << endl;
+     //   std::cout << "\n\nless than " << winThreshold << "to win\n";
+       // std::cout << "draw between " << winThreshold << " and " << drawThreshold << endl;
         if (score < winThreshold) {
             club1.addWin();
             club2.addLoss();
              winnergoals = WeightedGoals(goal_score,(5+advantage));
-            if (winnergoals > 0) {
-                losergoals = rand() % winnergoals;
+            if (winnergoals > 1) {
+                losergoals = rand() % (winnergoals-1);
             }
             else {
                 winnergoals = 1;
@@ -287,8 +291,8 @@ void gamesim( Club& club1,  Club& club2) {
             club2.addWin();
             club1.addLoss();
              winnergoals = WeightedGoals(goal_score, advantage);
-            if (winnergoals > 0) {
-                 losergoals = rand() % winnergoals;
+            if (winnergoals > 1) {
+                 losergoals = rand() % (winnergoals-1);
             }
             else {
                 winnergoals = 1;
@@ -307,15 +311,15 @@ void gamesim( Club& club1,  Club& club2) {
         else if(club2.getRating() > club1.getRating()) {
         winThreshold = (38.4 + (formdiff / 2) - ((difference * 1.5) / 2));
         drawThreshold = winThreshold + (30.8 + (formdiff / 2) - ((difference * 1.5) / 2));
-        std::cout << club1.getclubname() << " win less than " << winThreshold << endl;
-      std::cout << "draw at " << winThreshold << " and " << drawThreshold << endl;
+        //std::cout << club1.getclubname() << " win less than " << winThreshold << endl;
+      //std::cout << "draw at " << winThreshold << " and " << drawThreshold << endl;
             if (score < winThreshold) {
                 club1.addWin();
                 club2.addLoss();
 
                 winnergoals = WeightedGoals(goal_score, (5 + advantage));
-                if (winnergoals > 0) {
-                    losergoals = rand() % winnergoals;
+                if (winnergoals > 1) {
+                    losergoals = rand() % (winnergoals-1);
                 }
                 else {
                     winnergoals = 1;
@@ -345,8 +349,8 @@ void gamesim( Club& club1,  Club& club2) {
                 club2.addWin();
                 club1.addLoss();
                 winnergoals = WeightedGoals(goal_score, advantage);
-                if (winnergoals > 0) {
-                    losergoals = rand() % winnergoals;
+                if (winnergoals > 1) {
+                    losergoals = rand() % (winnergoals - 1);
                 }
                 else {
                     winnergoals = 1;
@@ -356,15 +360,15 @@ void gamesim( Club& club1,  Club& club2) {
                 club2.addGoalAgainst(losergoals);
                 club1.addGoals(losergoals);
                 club1.addGoalAgainst(winnergoals);
-                std::cout << club1.getclubname() << " " << losergoals << " - " << winnergoals << " "
-                    << club2.getclubname() << " at " << club1.getStadium() << endl;
+                //std::cout << club1.getclubname() << " " << losergoals << " - " << winnergoals << " "
+                  //  << club2.getclubname() << " at " << club1.getStadium() << endl;
             }
             }
     // displaying the last 5 matches results for each team
-    club1.displayForm();
-    std::cout << club1.calculateForm() << endl;
-    club2.displayForm();
-    std::cout << club2.calculateForm() << endl;
+    //club1.displayForm();
+    //std::cout << club1.calculateForm() << endl;
+    //club2.displayForm();
+    //std::cout << club2.calculateForm() << endl;
     }
 
 class League {
@@ -426,6 +430,7 @@ public:
         for (const auto& Club : sorted_clubs) {
             Club.displayStats();
         }
+        std::cout << "total goals: " << calculateTotalGoals();
     }
     void displayMatchday() {
         // Display matches
@@ -448,6 +453,13 @@ public:
             }
             std::cout << endl;
         }
+    }
+    int calculateTotalGoals() const {
+        int totalGoals = 0;
+        for (const auto& club : clubs) {
+            totalGoals += club.getGoals();
+        }
+        return totalGoals;
     }
 };
 
@@ -473,20 +485,22 @@ int main() {
     Club club14("Southampton", "St Mary's Stadium", 32389, 74.3);
     Club club15("Brighton & Hove Albion", "Amex Stadium", 30750, 71.5);
     Club club16("Newcastle United", "St James' Park", 52389, 73.8); 
-    Club club17("Burnley", "Turf Moor", 21401, 69.2);
-    Club club18("Fulham", "Craven Cottage", 19359, 67.4);
-    Club club19("Sheffield United", "Bramall Lane", 32702, 68.7);
-    Club club20("West Bromwich Albion", "The Hawthorns", 26688, 66.9);
+    Club club17("Burnley", "Turf Moor", 21401, 79.2);
+    Club club18("Fulham", "Craven Cottage", 19359, 75.4);
+    Club club19("Sheffield United", "Bramall Lane", 32702, 77.7);
+    Club club20("West Bromwich Albion", "The Hawthorns", 26688, 72.9);
     vector<Club> clubs = { club1, club2, club3, club4, club5, club6, club7, club8, club9, club10,
                            club11, club12, club13, club14, club15, club16, club17, club18, club19, club20 };
     for (auto club : clubs) {
         premier_league.addclub(club);
     }
-    //premier_league.displayLeague();
-    premier_league.addmatchday();
-   // premier_league.displayMatchday();
-    premier_league.simulateMatchdays();
-    premier_league.displayLeagueTable();
+   // for (int i = 0; i < 100; i++) {
+        //premier_league.displayLeague();
+        premier_league.addmatchday();
+        // premier_league.displayMatchday();
+        premier_league.simulateMatchdays();
+        premier_league.displayLeagueTable();
+   // }
     
   
     
