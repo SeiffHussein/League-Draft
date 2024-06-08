@@ -65,11 +65,12 @@ private:
     int m_lose;
     queue<char> m_form;
     vector<Player> squad;
-    //int m_goals;
+    int m_goals;
+    int m_goalsConceded;
 public:
     Club(const string & clubname, const string &stadium, int capacity, double rating)
     :m_clubname(clubname),m_stadium(stadium),m_capacity(capacity),m_rating(rating),
-        m_matches(0), m_points(0),m_win(0), m_draw(0),m_lose(0) 
+        m_matches(0), m_points(0),m_win(0), m_draw(0),m_lose(0), m_goals(0),m_goalsConceded(0)
     {}
 
     void  display() const {
@@ -118,6 +119,8 @@ public:
                 m_form.push('L');
         }
     }
+    void addGoals(int goal) { m_goals += goal; }
+    void addGoalAgainst(int goal) { m_goalsConceded += goal; }
     int calculateForm() const {
         int form{0};
         queue<char> tempform = m_form;
@@ -221,12 +224,14 @@ void gamesim( Club& club1,  Club& club2) {
     float difference = abs(club1.getRating() - club2.getRating());
     double signedDifference = club1.getRating() - club2.getRating();
     //if (difference > 41){}
-    float score = distr(gen);
+    float score = distr(gen); // random number to determine the winner
+    float goal_score = distr(gen); // random number to determine number of goals
+    cout << "goal: " << goal_score<< endl;
  
 
     // *form difference code here*
     int formdiff = club1.calculateForm() - club2.calculateForm(); 
-    double Homeadvantage = formdiff + signedDifference + 5;
+    double advantage = formdiff + signedDifference;
     
     
     std::cout << endl << "winner : " << score << "\n difference: " << difference << "\n";
@@ -237,6 +242,9 @@ void gamesim( Club& club1,  Club& club2) {
 
     double winThreshold = (38.4 + formdiff + (difference * 1.5));
     double drawThreshold = winThreshold + ((30.8 - ((difference * 1.5) / 2)));
+    int winnergoals;
+    int losergoals;
+    int goals;
 
     if (club1.getRating() >= club2.getRating()) {
         std::cout << "\n\nless than " << winThreshold << "to win\n";
@@ -244,21 +252,52 @@ void gamesim( Club& club1,  Club& club2) {
         if (score < winThreshold) {
             club1.addWin();
             club2.addLoss();
-           std:: cout << club1.getclubname() << " won against "
+             winnergoals = WeightedGoals(goal_score,(5+advantage));
+            if (winnergoals > 0) {
+                losergoals = rand() % winnergoals;
+            }
+            else {
+                winnergoals = 1;
+                losergoals = 0;
+            }
+            club1.addGoals(winnergoals);
+            club1.addGoalAgainst(losergoals);
+            club2.addGoals(losergoals);
+            club2.addGoalAgainst(winnergoals);
+           std:: cout << club1.getclubname() << " " << winnergoals << " - " << losergoals << " "
                 << club2.getclubname() << " at " << club1.getStadium() << endl;
+           
         }
         else if (score >= winThreshold && score <= drawThreshold)
         {
             club1.addDraw();
             club2.addDraw();
-            std::cout << club1.getclubname() << " drawed with "
+             goals = WeightedGoals(goal_score,advantage);
+            club1.addGoals(goals);
+            club1.addGoalAgainst(goals);
+            club2.addGoals(goals);
+            club2.addGoalAgainst(goals);
+
+            std::cout << club1.getclubname() << " " << goals << " - " << goals << " "
                 << club2.getclubname() << " at " << club1.getStadium() << endl;
         }
         else {
             club2.addWin();
             club1.addLoss();
-            std::cout << club2.getclubname() << " won against "
-                << club1.getclubname() << " at " << club1.getStadium() << endl;
+             winnergoals = WeightedGoals(goal_score, advantage);
+            if (winnergoals > 0) {
+                 losergoals = rand() % winnergoals;
+            }
+            else {
+                winnergoals = 1;
+                losergoals = 0;
+            }
+            club2.addGoals(winnergoals);
+            club2.addGoalAgainst(losergoals);
+            club1.addGoals(losergoals);
+            club1.addGoalAgainst(winnergoals);
+            std::cout << club1.getclubname() << " " << losergoals << " - " << winnergoals << " "
+                << club2.getclubname() << " at " << club1.getStadium() << endl;
         }
     }
 
@@ -271,20 +310,52 @@ void gamesim( Club& club1,  Club& club2) {
             if (score < winThreshold) {
                 club1.addWin();
                 club2.addLoss();
-                std::cout << club1.getclubname() << " won against "
+
+                winnergoals = WeightedGoals(goal_score, (5 + advantage));
+                if (winnergoals > 0) {
+                    losergoals = rand() % winnergoals;
+                }
+                else {
+                    winnergoals = 1;
+                    losergoals = 0;
+                }
+                club1.addGoals(winnergoals);
+                club1.addGoalAgainst(losergoals);
+                club2.addGoals(losergoals);
+                club2.addGoalAgainst(winnergoals);
+
+                std::cout << club1.getclubname() << '\t' << winnergoals << " - " << losergoals<< '\t'
                     << club2.getclubname() << " at " << club1.getStadium() << endl;
             }
             else if (score >= winThreshold && score <= drawThreshold) {
                 club1.addDraw();
                 club2.addDraw();
-                std::cout << club1.getclubname() << " drawed with "
+                goals = WeightedGoals(goal_score, advantage);
+                club1.addGoals(goals);
+                club1.addGoalAgainst(goals);
+                club2.addGoals(goals);
+                club2.addGoalAgainst(goals);
+
+                std::cout << club1.getclubname() << " " << goals << " - " << goals << " "
                     << club2.getclubname() << " at " << club1.getStadium() << endl;
             }
             else {
                 club2.addWin();
                 club1.addLoss();
-                std::cout << club2.getclubname() << " won against "
-                    << club1.getclubname() << " at " << club1.getStadium() << endl;
+                winnergoals = WeightedGoals(goal_score, advantage);
+                if (winnergoals > 0) {
+                    losergoals = rand() % winnergoals;
+                }
+                else {
+                    winnergoals = 1;
+                    losergoals = 0;
+                }
+                club2.addGoals(winnergoals);
+                club2.addGoalAgainst(losergoals);
+                club1.addGoals(losergoals);
+                club1.addGoalAgainst(winnergoals);
+                std::cout << club1.getclubname() << " " << losergoals << " - " << winnergoals << " "
+                    << club2.getclubname() << " at " << club1.getStadium() << endl;
             }
             }
     // displaying the last 5 matches results for each team
@@ -412,8 +483,10 @@ int main() {
     //premier_league.displayMatchday();
    // premier_league.simulateMatchdays();
     //premier_league.displayLeagueTable();
-    //gamesim(club5, club20);
-    gamesim(club20, club5);
+    for (int i = 0; i < 5;  i++) {
+        gamesim(club2, club5);
+    }
+    //gamesim(club20, club5);
   
     
 }
