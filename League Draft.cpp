@@ -71,10 +71,11 @@ private:
     vector<Player> squad;
     int m_goals;
     int m_goalsConceded;
+    int m_goalDiff;
 public:
     Club(const string & clubname, const string &stadium, const string& manager, int capacity, double rating)
     :m_clubname(clubname),m_stadium(stadium),m_manager(manager),m_capacity(capacity),m_rating(rating),
-        m_matches(0), m_points(0),m_win(0), m_draw(0),m_lose(0), m_goals(0),m_goalsConceded(0)
+        m_matches(0), m_points(0),m_win(0), m_draw(0),m_lose(0), m_goals(0),m_goalsConceded(0),m_goalDiff(0)
     {}
 
     void  display() const {
@@ -90,7 +91,8 @@ public:
             << setw(5) << m_draw
             << setw(5) << m_lose
             << setw(5) << m_goals
-            << setw(5) << m_goalsConceded << endl;
+            << setw(5) << m_goalsConceded 
+            << setw(5) << m_goalDiff<< endl;
     }
     void addGame() { m_matches++; }
     void addWin() {
@@ -125,8 +127,8 @@ public:
                 m_form.push('L');
         }
     }
-    void addGoals(int goal) { m_goals += goal; }
-    void addGoalAgainst(int goal) { m_goalsConceded += goal; }
+    void addGoals(int goal) { m_goals += goal; m_goalDiff += goal; } //NOT EFFICIENT 
+    void addGoalAgainst(int goal) { m_goalsConceded += goal; m_goalDiff -= goal; }
     int calculateForm() const {
         int form{0};
         queue<char> tempform = m_form;
@@ -175,6 +177,7 @@ public:
     int getDraw() const { return m_draw; }
     int getLoss() const { return m_lose; }
     int getGoals() const { return m_goals;}
+    int getGoalDiff() const { return m_goalDiff; }
 
 
 
@@ -417,6 +420,9 @@ public:
         vector<Club> sorted_clubs = clubs;
         
         sort(sorted_clubs.begin(), sorted_clubs.end(), [](const Club& a, const Club& b) {
+            if (a.getPoints() == b.getPoints()) {
+                return a.getGoalDiff() > b.getGoalDiff();
+            }
             return a.getPoints() > b.getPoints();
             });
 
@@ -427,11 +433,13 @@ public:
             << setw(5) << "D"
             << setw(5) << "L" 
             << setw(5) << "G"
-            << setw(5) << "GA" << endl;
+            << setw(5) << "GA" 
+            << setw(5) << "GD" << endl;
         for (const auto& Club : sorted_clubs) {
             Club.displayStats();
         }
-        std::cout << "total goals: " << calculateTotalGoals();
+    std:cout << sorted_clubs[0].getclubname() << " is " << League_name << " winner " << endl;
+        //std::cout << "total goals: " << calculateTotalGoals();
     }
     void displayMatchday() {
         // Display matches

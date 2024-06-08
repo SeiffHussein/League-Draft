@@ -1,6 +1,6 @@
-Real Madrid,Santiago Bernabeu,Carlo Ancelotti,81044,95.2
-Barcelona,Camp Nou,Xavi Hernandez,99354,93.8
-Atletico Madrid,Wanda Metropolitano,Diego Simeone,68456,90.1
+Real Madrid,Santiago Bernabeu,Carlo Ancelotti,81044,98.2
+Barcelona,Camp Nou,Xavi Hernandez,99354,96.8
+Atletico Madrid,Wanda Metropolitano,Diego Simeone,68456,94.1
 Sevilla,Ramon Sanchez Pizjuan,Jose Luis Mendilibar,43883,84.5
 Real Betis,Benito Villamarin,Manuel Pellegrini,60721,82.3
 Real Sociedad,Reale Arena,Imanol Alguacil,39500,83.2
