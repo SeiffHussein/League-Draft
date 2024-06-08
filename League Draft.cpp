@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <queue>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -58,7 +59,7 @@ class Club {
 private:
     string m_clubname;
     string m_stadium;
-   // string m_manager;
+    string m_manager;
     int m_capacity;
     double m_rating;
     int m_matches;
@@ -71,14 +72,14 @@ private:
     int m_goals;
     int m_goalsConceded;
 public:
-    Club(const string & clubname, const string &stadium, int capacity, double rating)
-    :m_clubname(clubname),m_stadium(stadium),m_capacity(capacity),m_rating(rating),
+    Club(const string & clubname, const string &stadium, const string& manager, int capacity, double rating)
+    :m_clubname(clubname),m_stadium(stadium),m_manager(manager),m_capacity(capacity),m_rating(rating),
         m_matches(0), m_points(0),m_win(0), m_draw(0),m_lose(0), m_goals(0),m_goalsConceded(0)
     {}
 
     void  display() const {
         std::cout << m_clubname << '\n' << m_stadium << " Stadium\n"
-            << "Capicity: " << m_capacity << endl << "\n\n";
+            << "Capicity: " << m_capacity << "\nManager: " << m_manager << "\n\n";
     }
 
     void displayStats() const {
@@ -468,38 +469,39 @@ public:
 int main() {
     int x = time(0);
     srand(x);
-    League premier_league("Premier League");
-    Club club1("Manchester United", "Old Trafford", 74000, 84.5);
-    Club club2("Liverpool", "Anfield", 54000, 94.7);
-    Club club3("Chelsea", "Stamford Bridge", 42000, 88.3);
-    Club club4("Arsenal", "Emirates", 60260, 88.4);
-    Club club5("Manchester City", "Etihad", 55000, 97.5);
-    Club club6("Tottenham Spurs", "White Heartlane", 30000, 86.1);
-    Club club7("Leicester City", "King Power Stadium", 32312, 82.1);
-    Club club8("West Ham United", "London Stadium", 60000, 78.9);
-    Club club9("Everton", "Goodison Park", 39209, 81.4);
-    Club club10("Aston Villa", "Villa Park", 42785, 79.8);
-    Club club11("Wolverhampton Wanderers", "Molineux Stadium", 32050, 77.6);
-    Club club12("Leeds United", "Elland Road", 37966, 75.2);
-    Club club13("Crystal Palace", "Selhurst Park", 25486, 72.9);
-    Club club14("Southampton", "St Mary's Stadium", 32389, 74.3);
-    Club club15("Brighton & Hove Albion", "Amex Stadium", 30750, 71.5);
-    Club club16("Newcastle United", "St James' Park", 52389, 73.8); 
-    Club club17("Burnley", "Turf Moor", 21401, 79.2);
-    Club club18("Fulham", "Craven Cottage", 19359, 75.4);
-    Club club19("Sheffield United", "Bramall Lane", 32702, 77.7);
-    Club club20("West Bromwich Albion", "The Hawthorns", 26688, 72.9);
-    vector<Club> clubs = { club1, club2, club3, club4, club5, club6, club7, club8, club9, club10,
-                           club11, club12, club13, club14, club15, club16, club17, club18, club19, club20 };
-    for (auto club : clubs) {
-        premier_league.addclub(club);
+    std::cout << "Input League Name: ";
+    string LeagueName;
+    getline(cin,LeagueName);
+    League league(LeagueName);
+    vector<Club> clubs;
+    cout << "Please input the League's file name: ";
+    string filename;
+    cin >> filename;
+    ifstream file(filename);
+    if (!file) { cerr << "file could not be opened"; return 1; }
+    string line;
+    string clubname, stadium, manager;
+    int capacity;
+    double rating;
+
+    while (getline(file, line)) {
+        stringstream stream(line);
+        if (getline(stream, clubname, ',') &&
+            getline(stream, stadium, ',') &&
+            getline(stream, manager, ',') &&
+            (stream >> capacity) && stream.ignore() &&
+            (stream >> rating)) {
+            league.addclub(Club(clubname, stadium, manager, capacity, rating));
+        }
+        else {
+            cerr << "wrong formatting in line " << line << endl;
+        }
     }
-   // for (int i = 0; i < 100; i++) {
-        //premier_league.displayLeague();
-        premier_league.addmatchday();
+        league.displayLeague();
+       // premier_league.addmatchday();
         // premier_league.displayMatchday();
-        premier_league.simulateMatchdays();
-        premier_league.displayLeagueTable();
+        //premier_league.simulateMatchdays();
+        //premier_league.displayLeagueTable();
    // }
     
   

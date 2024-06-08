@@ -1,0 +1,20 @@
+Real Madrid,Santiago Bernabeu,Carlo Ancelotti,81044,95.2
+Barcelona,Camp Nou,Xavi Hernandez,99354,93.8
+Atletico Madrid,Wanda Metropolitano,Diego Simeone,68456,90.1
+Sevilla,Ramon Sanchez Pizjuan,Jose Luis Mendilibar,43883,84.5
+Real Betis,Benito Villamarin,Manuel Pellegrini,60721,82.3
+Real Sociedad,Reale Arena,Imanol Alguacil,39500,83.2
+Villarreal,Estadio de la Ceramica,Quique Setien,24890,81.0
+Athletic Bilbao,San Mames,Ernesto Valverde,53289,79.4
+Valencia,Mestalla,Ruben Baraja,55000,77.9
+Osasuna,El Sadar,Jagoba Arrasate,23516,75.6
+Granada,Los Carmenes,Paco Lopez,22524,73.0
+Getafe,Coliseum Alfonso Perez,Jose Bordalas,17393,70.8
+Mallorca,Visit Mallorca Estadi,Javier Aguirre,23142,72.7
+Alaves,Mendizorrotza,Luis Garcia Plaza,19840,69.5
+Cadiz,Estadio Nuevo Mirandilla,Sergio Gonzalez,25033,68.9
+Celta Vigo,Abanca Balaidos,Rafael Benitez,29000,71.2
+Espanyol,RCDE Stadium,Luis Garcia,40500,70.5
+Girona,Montilivi,Michel,13500,69.8
+Rayo Vallecano,Vallecas,Francisco Rodriguez,14708,70.0
+Real Valladolid,Estadio Jose Zorrilla,Paulo Pezzolano,26512,71.0
