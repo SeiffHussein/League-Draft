@@ -186,12 +186,13 @@ void gamesim( Club& club1,  Club& club2) {
     mt19937 gen(rd());  // Seed the generator
     uniform_real_distribution<> distr(0, 100);  // Define the range
     float difference = abs(club1.getRating() - club2.getRating());
+    //if (difference > 41){}
     float score = distr(gen);
 
     // *form difference code here*
     int formdiff = club1.calculateForm() - club2.calculateForm(); 
      
-     
+    
     
     std::cout << endl << "winner : " << score << "\n difference: " << difference << "\n";
     
@@ -199,16 +200,19 @@ void gamesim( Club& club1,  Club& club2) {
     club1.addGame();
     club2.addGame();
 
+    double winThreshold = (38.4 + formdiff + (difference * 1.5));
+    double drawThreshold = winThreshold + ((30.8 - ((difference * 1.5) / 2)));
+
     if (club1.getRating() >= club2.getRating()) {
-        std::cout << "\n\nless than " << (38.4 + formdiff + (difference * 1.5)) << "to win\n";
-        std::cout << "draw between " << (38.4 + formdiff + (difference * 1.5)) << " and " << (38.4 + formdiff + ((difference * 1.5)) + ((30.8 - (formdiff/2) - ((difference * 1.5) / 2)))) << endl;
-        if (score < (38.4 + formdiff + (difference * 1.5))) {
+        std::cout << "\n\nless than " << winThreshold << "to win\n";
+        std::cout << "draw between " << winThreshold << " and " << drawThreshold << endl;
+        if (score < winThreshold) {
             club1.addWin();
             club2.addLoss();
            std:: cout << club1.getclubname() << " won against "
                 << club2.getclubname() << " at " << club1.getStadium() << endl;
         }
-        else if (score >= (38.4 + formdiff + (difference * 1.5)) && score <= (38.4 + formdiff+ ((difference * 1.5)) + ((30.8 - ((difference * 1.5) / 2)))))
+        else if (score >= winThreshold && score <= drawThreshold)
         {
             club1.addDraw();
             club2.addDraw();
@@ -223,15 +227,17 @@ void gamesim( Club& club1,  Club& club2) {
         }
     }
         else if(club2.getRating() > club1.getRating()) {
-        std::cout << club1.getclubname() << " win less than " << (38.4+ (formdiff/2) - ((difference * 1.5) / 2)) << endl;
-      std::cout << "draw at " << (38.4+ (formdiff/2) - ((difference * 1.5) / 2)) << " and " << ((38.4+ (formdiff/2) - ((difference * 1.5) / 2)) + (30.8+ (formdiff/2) - ((difference * 1.5) / 2))) << endl;
-            if (score < (38.4 + (formdiff/2) - ((difference*1.5)/2))) {
+        winThreshold = (38.4 + (formdiff / 2) - ((difference * 1.5) / 2));
+        drawThreshold = winThreshold + (30.8 + (formdiff / 2) - ((difference * 1.5) / 2));
+        std::cout << club1.getclubname() << " win less than " << winThreshold << endl;
+      std::cout << "draw at " << winThreshold << " and " << drawThreshold << endl;
+            if (score < winThreshold) {
                 club1.addWin();
                 club2.addLoss();
                 std::cout << club1.getclubname() << " won against "
                     << club2.getclubname() << " at " << club1.getStadium() << endl;
             }
-            else if (score >= (38.4 + (formdiff/2) - ((difference * 1.5) / 2)) && score <= ((38.4+ (formdiff/2) - ((difference * 1.5) / 2)) + (30.8 +(formdiff/2) - ((difference * 1.5) / 2)))) {
+            else if (score >= winThreshold && score <= drawThreshold) {
                 club1.addDraw();
                 club2.addDraw();
                 std::cout << club1.getclubname() << " drawed with "
@@ -368,9 +374,8 @@ int main() {
     //premier_league.displayMatchday();
    // premier_league.simulateMatchdays();
     //premier_league.displayLeagueTable();
-    for (int i = 0; i < 10; i++) {
-        gamesim(club20, club5);
-  }
+    //gamesim(club5, club20);
+    gamesim(club20, club5);
   
     
 }
