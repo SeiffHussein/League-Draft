@@ -95,37 +95,25 @@ public:
             << setw(5) << m_goalDiff<< endl;
     }
     void addGame() { m_matches++; }
+    void updateForm(char result) {
+        if (m_form.size() == 5) {
+            m_form.pop();
+        }
+        m_form.push(result);
+    }
     void addWin() {
         m_win++;
         m_points += 3;
-        if (m_form.size() == 5) {
-            m_form.pop();
-            m_form.push('W');
-        }
-        else {
-            m_form.push('W');
-        }
+        updateForm('W');
     }
     void addDraw() {
         m_draw++;
         m_points += 1;
-        if (m_form.size() == 5) {
-            m_form.pop();
-            m_form.push('D');
-        }
-        else {
-            m_form.push('D');
-        }
+        updateForm('D');
     }
     void addLoss() {
         m_lose++;
-        if (m_form.size() == 5) {
-            m_form.pop();
-            m_form.push('L');
-        }
-        else {
-                m_form.push('L');
-        }
+        updateForm('L');
     }
     void addGoals(int goal) { m_goals += goal; m_goalDiff += goal; } //NOT EFFICIENT 
     void addGoalAgainst(int goal) { m_goalsConceded += goal; m_goalDiff -= goal; }
@@ -382,85 +370,134 @@ private:
     vector<Club> clubs;
     vector<vector<pair<int, int>>> matchday;;
 
-public: 
+public:
+
     League(string const name) : League_name(name), club_no(0) {}
+
     void addclub(Club const & club) {
         clubs.push_back(club);
-        club_no = clubs.size(); //need something more efficient O(n)
+        club_no++;
     }
     void addmatchday(){
-
-        matchday.resize(((club_no - 1)*2), vector<pair<int, int>>(club_no / 2));
-        vector<int> team_indices(club_no);
-        for (int i = 0; i < club_no; i++) {
-            team_indices[i] = i;
-        }
-        random_device rd;
-        mt19937 g(rd());
-        for (int i = 0; i < club_no - 1; ++i) {
-            shuffle(team_indices.begin(), team_indices.end(), g);
-            for (int j = 0; j < club_no / 2; ++j) {
-                matchday[i][j] = make_pair(team_indices[2 * j], team_indices[2 * j + 1]);
-                matchday[i+club_no-1][j] = make_pair(team_indices[2 * j + 1], team_indices[2 * j]);
+        try {
+            if (club_no % 2 != 0) throw runtime_error("Error 001: Couldn't add matchday, Club Number Should be even");
+            if (!matchday.empty()) throw runtime_error("Error 004: All league matchdays have already been added");
+            matchday.resize(((club_no - 1) * 2), vector<pair<int, int>>(club_no / 2));
+            vector<int> team_indices(club_no);
+            for (int i = 0; i < club_no; i++) {
+                team_indices[i] = i;
             }
+
+            random_device rd;
+            mt19937 g(rd());
+            for (int i = 0; i < club_no - 1; ++i) {
+                shuffle(team_indices.begin(), team_indices.end(), g);
+                for (int j = 0; j < club_no / 2; ++j) {
+                    matchday[i][j] = make_pair(team_indices[2 * j], team_indices[2 * j + 1]);
+                    matchday[i + club_no - 1][j] = make_pair(team_indices[2 * j + 1], team_indices[2 * j]);
+                }
+            }
+            cout << "Matchday has been added Successfully\n";
         }
+        catch (const runtime_error& e) {
+            cout << e.what() << endl;
+        }
+        catch (const exception& e) {
+            cout << "An unexpected error occurred: " << e.what() << endl;
+        }
+       
     }
     
     int getClubno() { return club_no; }
     void displayLeague()const {
-        std::cout << "League name: " << League_name << endl;
-        std::cout << "Number of clubs: " << club_no << endl;
-        std::cout << "clubs:\n";
-        for (const auto & Club : clubs) {
-            Club.display();
+        try {
+            if (clubs.empty()) throw runtime_error("Error 005: No Clubs in the league to be displayed");
+            std::cout << "League name: " << League_name << endl;
+            std::cout << "Number of clubs: " << club_no << endl;
+            std::cout << "clubs:\n";
+            for (const auto& Club : clubs) {
+                Club.display();
 
-    }
+            }
+        }
+        catch (const runtime_error& e) { cout << e.what() << endl;}
+        catch (const exception& e) {
+            cout << "An unexpected error occurred: " << e.what() << endl;
+        }
                         }
     void displayLeagueTable()const {
-        vector<Club> sorted_clubs = clubs;
-        
-        sort(sorted_clubs.begin(), sorted_clubs.end(), [](const Club& a, const Club& b) {
-            if (a.getPoints() == b.getPoints()) {
-                return a.getGoalDiff() > b.getGoalDiff();
-            }
-            return a.getPoints() > b.getPoints();
-            });
+        try {
+            if (clubs.empty()) throw runtime_error("Error 006: No Clubs in the league to display League Table");
+            vector<Club> sorted_clubs = clubs;
 
-        std::cout << left << setw(25) << "Club"
-            << setw(5) << "MP"
-            << setw(5) << "Pts"
-            << setw(5) << "W"
-            << setw(5) << "D"
-            << setw(5) << "L" 
-            << setw(5) << "G"
-            << setw(5) << "GA" 
-            << setw(5) << "GD" << endl;
-        for (const auto& Club : sorted_clubs) {
-            Club.displayStats();
+            sort(sorted_clubs.begin(), sorted_clubs.end(), [](const Club& a, const Club& b) {
+                if (a.getPoints() == b.getPoints()) {
+                    return a.getGoalDiff() > b.getGoalDiff();
+                }
+                return a.getPoints() > b.getPoints();
+                });
+
+            std::cout << left << setw(25) << "Club"
+                << setw(5) << "MP"
+                << setw(5) << "Pts"
+                << setw(5) << "W"
+                << setw(5) << "D"
+                << setw(5) << "L"
+                << setw(5) << "G"
+                << setw(5) << "GA"
+                << setw(5) << "GD" << endl;
+            for (const auto& Club : sorted_clubs) {
+                Club.displayStats();
+            }
+        std:cout << sorted_clubs[0].getclubname() << " is " << League_name << " winner " << endl;
+            //std::cout << "total goals: " << calculateTotalGoals();
         }
-    std:cout << sorted_clubs[0].getclubname() << " is " << League_name << " winner " << endl;
-        //std::cout << "total goals: " << calculateTotalGoals();
+        catch (const runtime_error& e) {
+            cout << e.what() << endl;
+        }
+        catch (const exception& e) {
+            cout << "An unexpected error occurred: " << e.what() << endl;
+        }
     }
     void displayMatchday() {
         // Display matches
-        for (int match = 0; match < ((club_no - 1)*2); ++match) {
-            std::cout << "\nMatchday: " << match + 1 << endl;
-            for (const auto& game : matchday[match]) {
-                std::cout << "\n" << clubs[game.first].getclubname() << " vs " << clubs[game.second].getclubname();
-               
+        try {
+            if (matchday.size() == 0) throw runtime_error("Error 002: No Matches available to display ");
+            for (int match = 0; match < ((club_no - 1) * 2); ++match) {
+                std::cout << "\nMatchday: " << match + 1 << endl;
+                for (const auto& game : matchday[match]) {
+                    std::cout << "\n" << clubs[game.first].getclubname() << " vs " << clubs[game.second].getclubname();
+
+                }
+                std::cout << endl;
             }
-            std::cout << endl;
+        }
+        catch (const runtime_error& e) {
+            cout << e.what() << endl;
+        }
+        catch (const exception& e) {
+            cout << "An unexpected error occurred: " << e.what() << endl;
         }
     }
     friend void gamesim(const Club& club1, const Club& club2);
 
     void simulateMatchdays() {
-        for (int match = 0; match < ((club_no - 1) * 2); ++match) {
-            std::cout << "\nMatchday: " << match + 1 << endl;
-            for (const auto& game : matchday[match]) {
-                gamesim(clubs[game.first], clubs[game.second]);
+        try {
+            if (matchday.size() == 0) throw runtime_error("Error 003: No Matches available to simulate");
+            for (int match = 0; match < ((club_no - 1) * 2); ++match) {
+                std::cout << "\nMatchday: " << match + 1 << endl;
+                for (const auto& game : matchday[match]) {
+                    gamesim(clubs[game.first], clubs[game.second]);
+                }
+                std::cout << endl;
             }
-            std::cout << endl;
+        }
+
+        catch (const runtime_error& e) {
+            cout << e.what() << endl;
+        }
+        catch (const exception& e) {
+            cout << "An unexpected error occurred: " << e.what() << endl;
         }
     }
     int calculateTotalGoals() const {
@@ -506,6 +543,9 @@ int main() {
         }
     }
         league.displayLeague();
+        league.displayMatchday();
+        league.simulateMatchdays();
+       league.addmatchday();
        league.addmatchday();
         league.displayMatchday();
         league.simulateMatchdays();
