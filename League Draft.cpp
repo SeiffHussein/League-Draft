@@ -449,7 +449,7 @@ public:
             for (const auto& Club : sorted_clubs) {
                 Club.displayStats();
             }
-        std:cout << sorted_clubs[0].getclubname() << " is " << League_name << " winner " << endl;
+       if(!matchday.empty()) std:cout << sorted_clubs[0].getclubname() << " is " << League_name << " winner " << endl;
             //std::cout << "total goals: " << calculateTotalGoals();
         }
         catch (const runtime_error& e) {
@@ -514,40 +514,62 @@ public:
 int main() {
     int x = time(0);
     srand(x);
-    std::cout << "Input League Name: ";
-    string LeagueName;
-    getline(cin,LeagueName);
-    League league(LeagueName);
-    vector<Club> clubs;
-    cout << "Please input the League's file name: ";
-    string filename;
-    cin >> filename;
-    ifstream file(filename);
-    if (!file) { cerr << "file could not be opened"; return 1; }
-    string line;
-    string clubname, stadium, manager;
-    int capacity;
-    double rating;
+    int input{};
+        std::cout << "Input League Name: ";
+        string LeagueName;
+        getline(cin, LeagueName);
+        League league(LeagueName);
+        vector<Club> clubs;
+        cout << "Please input the League's file name: ";
+        string filename;
+        cin >> filename;
+        ifstream file(filename);
+        if (!file) { cerr << "file could not be opened"; return 1; }
+        string line;
+        string clubname, stadium, manager;
+        int capacity;
+        double rating;
 
-    while (getline(file, line)) {
-        stringstream stream(line);
-        if (getline(stream, clubname, ',') &&
-            getline(stream, stadium, ',') &&
-            getline(stream, manager, ',') &&
-            (stream >> capacity) && stream.ignore() &&
-            (stream >> rating)) {
-            league.addclub(Club(clubname, stadium, manager, capacity, rating));
+        while (getline(file, line)) {
+            stringstream stream(line);
+            if (getline(stream, clubname, ',') &&
+                getline(stream, stadium, ',') &&
+                getline(stream, manager, ',') &&
+                (stream >> capacity) && stream.ignore() &&
+                (stream >> rating)) {
+                league.addclub(Club(clubname, stadium, manager, capacity, rating));
+            }
+            else {
+                cerr << "wrong formatting in line " << line << endl;
+            }
         }
-        else {
-            cerr << "wrong formatting in line " << line << endl;
-        }
-    }
-        league.displayLeague();
-        league.displayMatchday();
-        league.simulateMatchdays();
-       league.addmatchday();
-       league.addmatchday();
-        league.displayMatchday();
-        league.simulateMatchdays();
-        league.displayLeagueTable();
-    }
+        do {
+            cout << "Menu:\n" << "1- Display League\n" << "2- Add matchdays\n" << "3-Display matchdays\n"
+                << "4- Simulate Matchdays\n" << "5- Display League Table\n" << "6- Exit\n";
+            cout << "Your Input: ";
+            cin >> input;
+            switch (input) {
+
+            case 1:
+                league.displayLeague();
+                break;
+            case 2:
+                league.addmatchday();
+                break;
+            case 3:
+                league.displayMatchday();
+                break;
+            case 4:
+                league.simulateMatchdays();
+                break;
+            case 5:
+                league.displayLeagueTable();
+                break;
+            case 6:
+                cout << "Program exited Successfully";
+                break;
+            }
+        } while (input != 6);
+        return 0;
+    
+}
