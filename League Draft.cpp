@@ -369,10 +369,11 @@ private:
     int club_no;
     vector<Club> clubs;
     vector<vector<pair<int, int>>> matchday;;
+    bool simulated;
 
 public:
 
-    League(string const name) : League_name(name), club_no(0) {}
+    League(string const name) : League_name(name), club_no(0), simulated(false) {}
 
     void addclub(Club const & club) {
         clubs.push_back(club);
@@ -484,6 +485,8 @@ public:
     void simulateMatchdays() {
         try {
             if (matchday.size() == 0) throw runtime_error("Error 003: No Matches available to simulate");
+            if (simulated) throw runtime_error("Error 007: League has already been simulated");
+
             for (int match = 0; match < ((club_no - 1) * 2); ++match) {
                 std::cout << "\nMatchday: " << match + 1 << endl;
                 for (const auto& game : matchday[match]) {
@@ -491,6 +494,7 @@ public:
                 }
                 std::cout << endl;
             }
+            simulated = true;
         }
 
         catch (const runtime_error& e) {
@@ -515,61 +519,60 @@ int main() {
     int x = time(0);
     srand(x);
     int input{};
-        std::cout << "Input League Name: ";
-        string LeagueName;
-        getline(cin, LeagueName);
-        League league(LeagueName);
-        vector<Club> clubs;
-        cout << "Please input the League's file name: ";
-        string filename;
-        cin >> filename;
-        ifstream file(filename);
-        if (!file) { cerr << "file could not be opened"; return 1; }
-        string line;
-        string clubname, stadium, manager;
-        int capacity;
-        double rating;
+    std::cout << "Input League Name: ";
+    string LeagueName;
+    getline(cin, LeagueName);
+    League league(LeagueName);
+    vector<Club> clubs;
+    cout << "Please input the League's file name: ";
+    string filename;
+    cin >> filename;
+    ifstream file(filename);
+    if (!file) { cerr << "file could not be opened"; return 1; }
+    string line;
+    string clubname, stadium, manager;
+    int capacity;
+    double rating;
 
-        while (getline(file, line)) {
-            stringstream stream(line);
-            if (getline(stream, clubname, ',') &&
-                getline(stream, stadium, ',') &&
-                getline(stream, manager, ',') &&
-                (stream >> capacity) && stream.ignore() &&
-                (stream >> rating)) {
-                league.addclub(Club(clubname, stadium, manager, capacity, rating));
-            }
-            else {
-                cerr << "wrong formatting in line " << line << endl;
-            }
+    while (getline(file, line)) {
+        stringstream stream(line);
+        if (getline(stream, clubname, ',') &&
+            getline(stream, stadium, ',') &&
+            getline(stream, manager, ',') &&
+            (stream >> capacity) && stream.ignore() &&
+            (stream >> rating)) {
+            league.addclub(Club(clubname, stadium, manager, capacity, rating));
         }
-        do {
-            cout << "Menu:\n" << "1- Display League\n" << "2- Add matchdays\n" << "3-Display matchdays\n"
-                << "4- Simulate Matchdays\n" << "5- Display League Table\n" << "6- Exit\n";
-            cout << "Your Input: ";
-            cin >> input;
-            switch (input) {
+        else {
+            cerr << "wrong formatting in line " << line << endl;
+        }
+    }
+    do {
+        cout << "Menu:\n" << "1- Display League\n" << "2- Add matchdays\n" << "3-Display matchdays\n"
+            << "4- Simulate Matchdays\n" << "5- Display League Table\n" << "6- Exit\n";
+        cout << "Your Input: ";
+        cin >> input;
+        switch (input) {
 
-            case 1:
-                league.displayLeague();
-                break;
-            case 2:
-                league.addmatchday();
-                break;
-            case 3:
-                league.displayMatchday();
-                break;
-            case 4:
-                league.simulateMatchdays();
-                break;
-            case 5:
-                league.displayLeagueTable();
-                break;
-            case 6:
-                cout << "Program exited Successfully";
-                break;
-            }
-        } while (input != 6);
-        return 0;
-    
+        case 1:
+            league.displayLeague();
+            break;
+        case 2:
+            league.addmatchday();
+            break;
+        case 3:
+            league.displayMatchday();
+            break;
+        case 4:
+            league.simulateMatchdays();
+            break;
+        case 5:
+            league.displayLeagueTable();
+            break;
+        case 6:
+            cout << "Program exited Successfully";
+            break;
+        }
+    } while (input != 6);
+    return 0;
 }
